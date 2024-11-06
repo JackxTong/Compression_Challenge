@@ -121,11 +121,23 @@ int main() {
 
 	double prob_sum = 0.0;
 
+	//Write output to .txt 
+	ofstream output_file("single_symbol_probabilities.txt");
+	if (!output_file.is_open()) {
+		cerr << "Cannot open output file ..." << endl;
+		return 1;
+	}
+	
+	output_file << "Symbol Probabilities:\n";
 	cout << "\nSymbol Probabilities:\n";
 	for (const auto& pair : symbol_counts) {
+
 		double probability = static_cast<double>(pair.second) / total_samples;
 		prob_sum += probability;
+
+		output_file << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(20) << probability << "\n";
 		cout << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(6) << probability << endl;
+
 	}
 	cout << "\nSum of all probabilities: " << prob_sum << endl;
 	return 0;
