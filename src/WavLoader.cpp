@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <direct.h>
 #include <string>
+#include <unordered_map>
+#include <iomanip>
 
 using namespace std;
 
@@ -111,6 +113,27 @@ int main() {
 	cout << "Channels: " << desc.channels << endl;
 	cout << "Bits per sample: " << desc.bits_per_sample << " bits" << endl;
 	cout << "Number of samples:" << desc.num_samples << endl;
+
+	unordered_map<int, uint32_t> symbol_counts;
+
+	for (uint32_t i = 0; i < desc.num_samples; ++i) {
+		symbol_counts[samples[i]]++;
+	}
+
+	//double prob_sum = 0.0;
+
+	//calculate probabilities from count
+
+	cout << "\nSymbol Probabilities:\n";
+	for (const auto& pair : symbol_counts) {
+		double probability = static_cast<double>(pair.second) / desc.num_samples;
+		cout << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(6) << probability << endl;
+
+		//prob_sum += probability;
+
+	}
+
+	//cout << "Sum of Probabilities: " << prob_sum << endl;
 
 	std::cout << "\nFirst few sample values:\n";
 	for (int i = 0; i < 10 && i < desc.num_samples; ++i) {
