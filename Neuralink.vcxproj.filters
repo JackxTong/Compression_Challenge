@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\WavLoader.cpp">
+    <ClCompile Include="src\findProbabilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,8 +5,11 @@
 #include <string>
 #include <unordered_map>
 #include <iomanip>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
+
 
 struct samples_t {
 	uint32_t sample_rate;
@@ -16,6 +19,8 @@ struct samples_t {
 };
 
 //see https://github.com/phoboslab/neuralink_brainwire/blob/master/bwenc.c
+//the code author implemented this method to downsample the data by 6 bits, as for some reason ...
+//it's not done by just a simple bit shift.
 
 static inline int brainwire_quant(int v) {
 	return static_cast<int>(floor(v / 64.0));
@@ -30,7 +35,7 @@ static inline int brainwire_dequant(int v) {
 	}
 }
 
-short* wav_read(const string& path, samples_t* desc) {
+static short* wav_read(const string& path, samples_t* desc) {
 
 	ifstream file(path, ios::binary);
 	if (!file.is_open()) {
@@ -70,7 +75,7 @@ short* wav_read(const string& path, samples_t* desc) {
 
 	for (uint32_t i = 0; i < desc->num_samples; ++i) {
 
-		//CHECK QUANTIZE LOGIC
+		//CHECK QUANTIZE LOGIC (can be removed just to check)
 		if (brainwire_dequant(brainwire_quant(samples[i])) != samples[i]) {
 			cout << "QUANTIZE ERROR" << endl;
 		}
@@ -82,65 +87,46 @@ short* wav_read(const string& path, samples_t* desc) {
 }
 
 int main() {
-	
-	string path = "../Neuralink/data_neuralink//00d4f842-fc92-45f5-8cae-3effdc2245f5.wav";
 
-	{
-		char cwd[512];
-		if (_getcwd(cwd, sizeof(cwd)) != nullptr) {
-			std::cout << "Current working directory: " << cwd << std::endl;
-		}
-		else {
-			std::cerr << "Error getting current working directory" << std::endl;
-		}
-
-		char buffer[512];
-		_fullpath(buffer, path.c_str(), 512);
-		std::cout << "Trying to open: " << buffer << std::endl;
-	}
-	
-	samples_t desc;
-
-	short* samples = wav_read(path, &desc);
-
-	if (samples == nullptr) {
-		cerr << "Failed to read .wav file!" << endl;
-		return 1;
-	}
-
-	cout << "\nMetadata from WAV: \n";
-	cout << "Sample Rate: " << desc.sample_rate << " Hz" << endl;
-	cout << "Channels: " << desc.channels << endl;
-	cout << "Bits per sample: " << desc.bits_per_sample << " bits" << endl;
-	cout << "Number of samples:" << desc.num_samples << endl;
-
+	string directory = "../Neuralink/data_neuralink/";
 	unordered_map<int, uint32_t> symbol_counts;
+	uint32_t total_samples = 0;
 
-	for (uint32_t i = 0; i < desc.num_samples; ++i) {
-		symbol_counts[samples[i]]++;
+	for (const auto& entry : fs::directory_iterator(directory)) {
+		if (entry.is_regular_file()) {
+			string path = entry.path().string();
+			cout << "Processing File: " << path << endl;
+
+			samples_t desc;
+			short* samples = wav_read(path, &desc);
+
+			if (samples == nullptr) {
+				cout << "Failed to read .wav file ..." << endl;
+				continue;
+			}
+
+			cout << "\nMetadata from WAV: \n";
+			cout << "Sample Rate: " << desc.sample_rate << " Hz" << endl;
+			cout << "Channels: " << desc.channels << endl;
+			cout << "Bits per sample: " << desc.bits_per_sample << " bits" << endl;
+			cout << "Number of samples:" << desc.num_samples << endl;
+
+			for (uint32_t i = 0; i < desc.num_samples; ++i) {
+				symbol_counts[samples[i]]++;
+			}
+			total_samples += desc.num_samples;
+			delete[] samples;
+		}
 	}
 
-	//double prob_sum = 0.0;
-
-	//calculate probabilities from count
+	double prob_sum = 0.0;
 
 	cout << "\nSymbol Probabilities:\n";
 	for (const auto& pair : symbol_counts) {
-		double probability = static_cast<double>(pair.second) / desc.num_samples;
+		double probability = static_cast<double>(pair.second) / total_samples;
+		prob_sum += probability;
 		cout << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(6) << probability << endl;
-
-		//prob_sum += probability;
-
 	}
-
-	//cout << "Sum of Probabilities: " << prob_sum << endl;
-
-	std::cout << "\nFirst few sample values:\n";
-	for (int i = 0; i < 10 && i < desc.num_samples; ++i) {
-		std::cout << "Sample " << i << ": " << samples[i] << std::endl;
-	}
-
-	delete[] samples;
-
+	cout << "\nSum of all probabilities: " << prob_sum << endl;
 	return 0;
 }
