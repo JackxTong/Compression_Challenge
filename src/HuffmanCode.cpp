@@ -11,7 +11,7 @@
 
 using namespace std;
 
-unordered_map<int, double> readProbabilities(const string& filename) {
+static unordered_map<int, double> readProbabilities(const string& filename) {
 	unordered_map<int, double> probabilities;
 	ifstream file(filename);
 	string line;

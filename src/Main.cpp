@@ -1,7 +1,7 @@
 // Main.cpp
 
 #include "findProbabilities.h"
-//#include "huffmanCoding.h"
+#include "huffmanCode.h"
 #include <iostream>
 
 using namespace std;
@@ -21,6 +21,8 @@ int main() {
             cout << "Failed to write probabilities." << endl;
         }
     }
+
+    int run = Huffman();
 
 	return 0;
 }

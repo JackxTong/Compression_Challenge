@@ -81,6 +81,8 @@ static short* wav_read(const string& path, samples_t* desc) {
 	return samples;
 }
 
+
+
 int outputtxt() {
 
 	string directory = "../Neuralink/data_neuralink/";
