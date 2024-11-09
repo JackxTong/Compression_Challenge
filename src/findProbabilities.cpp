@@ -1,22 +1,17 @@
+// Converts Neuralink .wav file (see https://content.neuralink.com/compression-challenge/README.html) ..
+// into symbol probabilities outputted into single_symbol_probabilities.txt.
+
+#include "findProbabilities.h"
 #include <iostream>
 #include <fstream>
-#include <cstdint>
-#include <direct.h>
-#include <string>
-#include <unordered_map>
+#include <sstream>
+#include <algorithm>
 #include <iomanip>
-#include <filesystem>
+#include <cmath>
 
 using namespace std;
+
 namespace fs = std::filesystem;
-
-
-struct samples_t {
-	uint32_t sample_rate;
-	uint16_t bits_per_sample;
-	uint32_t num_samples;
-	uint16_t channels;
-};
 
 //see https://github.com/phoboslab/neuralink_brainwire/blob/master/bwenc.c
 //the code author implemented this method to downsample the data by 6 bits, as for some reason ...
@@ -86,7 +81,7 @@ static short* wav_read(const string& path, samples_t* desc) {
 	return samples;
 }
 
-int main() {
+int outputtxt() {
 
 	string directory = "../Neuralink/data_neuralink/";
 	unordered_map<int, uint32_t> symbol_counts;
