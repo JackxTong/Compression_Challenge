@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "findProbabilities.h"
+
 using namespace std;
 
 static unordered_map<int, double> readProbabilities(const string& filename) {
@@ -42,14 +44,8 @@ static unordered_map<int, double> readProbabilities(const string& filename) {
 }
 
 int Huffman() {
-	string filename = "../Neuralink/single_symbol_probabilities.txt";
-
-	unordered_map<int, double> probabilities = readProbabilities(filename);
-
-	cout << "CODE IS RUNNING" << endl;
-	for (const auto& pair : probabilities) {
-		cout << "Symbol: " << pair.first << " | Probability: " << pair.second << endl;
-	}
+	
+	auto sortedProbabilities = returnSortedProb();
 
 	return 0;
 }

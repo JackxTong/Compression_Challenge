@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
 
-	cout << "Run probability calculation? (y/n) ? ";
+	cout << "Write to .txt? (y/n) ? ";
 	char choice;
 	cin >> choice;
 

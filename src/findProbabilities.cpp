@@ -8,6 +8,9 @@
 #include <algorithm>
 #include <iomanip>
 #include <cmath>
+#include <vector>
+#include <utility>
+#include <memory>
 
 using namespace std;
 
@@ -81,6 +84,51 @@ static short* wav_read(const string& path, samples_t* desc) {
 	return samples;
 }
 
+std::unique_ptr<std::vector<std::pair<int, double>>> returnSortedProb() {
+	string directory = "../Neuralink/data_neuralink/";
+	unordered_map<int, uint32_t> symbol_counts;
+	uint32_t total_samples = 0;
+
+	for (const auto& entry : fs::directory_iterator(directory)) {
+		if (entry.is_regular_file()) {
+			string path = entry.path().string();
+			cout << "Processing File: " << path << endl;
+
+			samples_t desc;
+			short* samples = wav_read(path, &desc);
+
+			if (samples == nullptr) {
+				cout << "Failed to read .wav file ..." << endl;
+				continue;
+			}
+
+			cout << "\nMetadata from WAV: \n";
+			cout << "Sample Rate: " << desc.sample_rate << " Hz" << endl;
+			cout << "Channels: " << desc.channels << endl;
+			cout << "Bits per sample: " << desc.bits_per_sample << " bits" << endl;
+			cout << "Number of samples:" << desc.num_samples << endl;
+
+			for (uint32_t i = 0; i < desc.num_samples; ++i) {
+				symbol_counts[samples[i]]++;
+			}
+			total_samples += desc.num_samples;
+			delete[] samples;
+		}
+	}
+
+	auto sorted_probabilities = std::make_unique<std::vector<std::pair<int, double>>>();
+	for (const auto& pair : symbol_counts) {
+		double probability = static_cast<double>(pair.second) / total_samples;
+		sorted_probabilities->emplace_back(pair.first, probability);
+	}
+
+	sort(sorted_probabilities->begin(), sorted_probabilities->end(),
+		[](const pair<int, double>& a, const pair<int, double>& b) {
+			return a.second > b.second;
+		});
+
+	return sorted_probabilities;
+}
 
 
 int outputtxt() {
@@ -133,9 +181,9 @@ int outputtxt() {
 		prob_sum += probability;
 
 		output_file << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(20) << probability << "\n";
-		cout << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(6) << probability << endl;
-
+		cout << "Symbol: " << setw(4) << pair.first << " | Count: " << setw(6) << pair.second << " | Probability: " << fixed << setprecision(20) << probability << "\n";
 	}
+
 	cout << "\nSum of all probabilities: " << prob_sum << endl;
 	return 0;
 }
