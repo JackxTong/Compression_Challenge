@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 const uint64_t SCALE = 1ULL << 32;
 
@@ -19,7 +20,7 @@ private:
     std::unordered_map<int, SymbolRange> probability_ranges;
 
 public:
-    arithmeticCode(ArithmeticCoder(const std::unordered_map<int, SymbolRange>& ranges);
+    arithmeticCode(std::unique_ptr<std::vector<std::pair<int, double>>> sortedProb());
     uint64_t encode(const std::vector<int>& symbols, int num_symbols);
 };
 
