@@ -58,7 +58,7 @@ unique_ptr<vector<pair<int, double>>> returnSortedProb()
 }
 
 
-int main()  {
+int outputTxt()  {
 
     auto probs = returnSortedProb();
     double prob_sum = 0.0;

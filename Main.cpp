@@ -2,7 +2,7 @@
 
 //#include "huffmanCode.h"
 #include "findProbabilities.h"
-#include <iostream>
+#include "wavReader.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ int main () {
 
     if (choice == 'y' || choice == 'Y') {
 
-        int result = outputtxt();
+        int result = outputTxt();
         
         if (result == 0) {
             cout << "Probabilites written to .txt!" << endl;
@@ -23,4 +23,5 @@ int main () {
             cout << "Failed to write probabilities..." << endl;
         }
     }
-}
+    return 0;
+}   

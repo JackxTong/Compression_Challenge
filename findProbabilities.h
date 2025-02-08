@@ -14,5 +14,7 @@
 #include <memory>  // For std::unique_ptr
 
 // Function declarations
+std::unique_ptr<std::vector<std::pair<int, double>>> returnSortedProb();
+int outputTxt();
 
 #endif // FINDPROBABILITIES_H
