@@ -5,8 +5,9 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <iomanip>
 
-const uint64_t SCALE = 1ULL << 32;
+const uint64_t SCALE = UINT64_MAX;
 
 struct SymbolRange {
     uint64_t low;
@@ -18,10 +19,11 @@ class arithmeticCode
 private:
     
     std::unordered_map<int, SymbolRange> probability_ranges;
+    std::vector<std::pair<int, double>> cumulative_probabilities;
 
 public:
-    arithmeticCode(std::unique_ptr<std::vector<std::pair<int, double>>> sortedProb());
-    uint64_t encode(const std::vector<int>& symbols, int num_symbols);
+    arithmeticCode(std::unique_ptr<std::vector<std::pair<int, double>>> sortedProb);
+    uint64_t encode(const std::vector<int>& symbols);
 };
 
 #endif // ARITHMETICCODE_H

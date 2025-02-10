@@ -1,7 +1,7 @@
 // findProbabilities.cpp
 // Converts Neuralink .wav file (see https://content.neuralink.com/compression-challenge/README.html) ..
 // into symbol probabilities outputted into single_symbol_probabilities.txt.
-// or returns ptr to vector or pairs for sorted probabilities.
+// or returns ptr to vector of pairs for sorted probabilities.
 
 #include "findProbabilities.h"
 #include "wavReader.h"
