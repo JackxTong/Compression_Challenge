@@ -29,9 +29,14 @@ int main () {
 
     auto code = arithmeticCode(move(sortedProbs));
 
-    vector<int> testInts = {23, 11, 27, 19, 23, 3, 10, 14, 6};
+    vector<int> testInts = {11, 7, 23, 19, 18, 27, 3, 26, 2, -6};
+    int streamSize = (testInts).size();
 
     uint64_t test = code.encode(testInts);
+
+    cout << "Encoded: " << test << endl;
+
+    vector<int> decodedInts = code.decode(test, streamSize);
 
     return 0;
 }   

@@ -24,6 +24,7 @@ private:
 public:
     arithmeticCode(std::unique_ptr<std::vector<std::pair<int, double>>> sortedProb);
     uint64_t encode(const std::vector<int>& symbols);
+    std::vector<int> decode(uint64_t code, int num_symbols);
 };
 
 #endif // ARITHMETICCODE_H
