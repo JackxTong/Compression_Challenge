@@ -78,6 +78,7 @@ std::vector<int> arithmeticCode::decode(uint64_t code, int num_symbols) {
 
         std::cout << "Iteration: " << i << " | Symbol: " << symbol 
                     << " | Low: " << low << " | High: " << high 
+                    << " | Diff: " << high - low
                     << " | Fraction: " << fraction << std::endl;
 
 
