@@ -3,14 +3,14 @@
 // into symbol probabilities outputted into single_symbol_probabilities.txt.
 // or returns ptr to vector of pairs for sorted probabilities.
 
-#include "findProbabilities.h"
-#include "wavReader.h"
+#include "../include/findProbabilities.h"
+#include "../include/wavReader.h"
 
 using namespace std;
 
 unique_ptr<vector<pair<int, double>>> returnSortedProb()
 {
-    string directory = "./data/";
+    string directory = "../data/";
     unordered_map<int, uint32_t> symbol_counts;
     uint32_t total_samples = 0;
 

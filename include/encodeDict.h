@@ -1,5 +1,5 @@
-#ifndef FINDPROBABILITIES_H
-#define FINDPROBABILITIES_H
+#ifndef ENCODEDICT_H
+#define ENCODEDICT_H
 
 #include <string>
 #include <fstream>
@@ -17,4 +17,4 @@
 std::unique_ptr<std::vector<std::pair<int, double>>> returnSortedProb();
 int outputTxt();
 
-#endif // FINDPROBABILITIES_H
+#endif // ENCODEDICT_H

@@ -1,6 +1,6 @@
 #include <iostream>
-#include "huffmanCode.h"
-#include "findProbabilities.h"
+#include "./include/huffmanCode.h"
+#include "./inlude/findProbabilities.h"
 
 using namespace std;
 
