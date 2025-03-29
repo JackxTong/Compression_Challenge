@@ -397,3 +397,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 *.out
+
+*.txt

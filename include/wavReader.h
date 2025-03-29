@@ -2,15 +2,19 @@
 #define WAVREADER_H
 
 #include <algorithm>
-#include <string>
-#include <vector>
-#include <filesystem>
-#include <iostream>
-#include <fstream>
+#include <array>
 #include <cmath>
 #include <cstdint>
-#include <utility>
+#include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <map>
 #include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include <omp.h>
 
 struct samples_t {
             uint32_t sample_rate;
@@ -35,20 +39,29 @@ struct wav_header {
     uint32_t subChunk2Size;
 };
 
+struct FileStats {  
+    std::map<std::vector<int16_t>, size_t> ngram_counts;
+    size_t total_count = 0;
+};
+
+
 class wavReader {
 
     private:
 
         std::vector<int> quantisedData;
-        std::vector<std::pair<int, double>> symbolProbs;
-        std::vector<std::pair<int, double>> sortedProbs;
+        std::vector<std::pair<std::vector<int16_t>, double>> sortedProbs;
         wav_header currHeader;
+
+        FileStats globalStats;
 
         std::unordered_map<int, uint32_t> symbol_counts;
         uint32_t totalSamples = 0;
 
         void getData(const std::string& path, wav_header* header);
         void makeSortedProb();
+
+        FileStats processFile(const std::string& path, int ngram_size);
 
     public:
     
