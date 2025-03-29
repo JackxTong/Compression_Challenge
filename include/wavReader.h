@@ -49,10 +49,8 @@ class wavReader {
 
     private:
 
-        std::vector<int> quantisedData;
         std::vector<std::pair<std::vector<int16_t>, double>> sortedProbs;
-        wav_header currHeader;
-
+        
         FileStats globalStats;
 
         std::unordered_map<int, uint32_t> symbol_counts;
@@ -61,13 +59,15 @@ class wavReader {
         void getData(const std::string& path, wav_header* header);
         void makeSortedProb();
 
-        FileStats processFile(const std::string& path, int ngram_size);
+        void processFile(const std::string& path, int ngram_size, FileStats& stats);
+
+        int ngram_size;
 
     public:
     
         int outputTxt();
 
-        wavReader();
+        wavReader(int NGRAM);
 
         ~wavReader();
 };

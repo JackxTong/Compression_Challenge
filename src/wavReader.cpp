@@ -35,10 +35,9 @@ void wavReader::makeSortedProb() {
 
 }
 
-FileStats wavReader::processFile(const std::string& path, int ngram_size) {
+void wavReader::processFile(const std::string& path, int ngram_size, FileStats& stats) {
 
-    wav_header header;
-    FileStats stats;    
+    wav_header header;  
 
     std::ifstream file(path, std::ios::binary);
 
@@ -73,32 +72,26 @@ FileStats wavReader::processFile(const std::string& path, int ngram_size) {
     if (file.gcount() != header.subChunk2Size) {
         std::cerr << "Error reading WAV data" << std::endl;
         delete[] samples;
-        return stats;
+        return;
+    }
+
+    // Quantise Data
+    for (size_t i = 0; i < num_samples; ++i) {
+        samples[i] = brainwireQuant(samples[i]);
     }
 
     for (size_t i = 0; i + ngram_size <= num_samples; ++i) {
         std::vector<int16_t> ngram(ngram_size);
         for (int j = 0; j < ngram_size; ++j) {
-            ngram[j] = brainwireQuant(samples[i + j]);
+            ngram[j] = samples[i + j];
         }
         stats.ngram_counts[ngram]++;
         stats.total_count++;
     }
 
-
-    for (size_t i = 0; i < num_samples; ++i) {
-
-        samples[i] = brainwireQuant(samples[i]);
-        std::vector<int16_t> num = {samples[i]};
-        stats.ngram_counts[num]++;
-    }
-
-    stats.total_count += num_samples;
-
     file.close();
     delete[] samples;
-
-    return stats;
+    return;
 }
 
 
@@ -139,7 +132,7 @@ int wavReader::outputTxt() {
     return 0;
 }
 
-wavReader::wavReader() {
+wavReader::wavReader(int NGRAM) : ngram_size(NGRAM) {
 
     const std::string directory = "./data/";    
     std::vector<std::string> file_paths;
@@ -153,16 +146,16 @@ wavReader::wavReader() {
         }
     }
     
-    int ngram_size = 2;
     int num_files = file_paths.size();
 
     std::vector<FileStats> allStats(num_files);
 
     std::cout << "READING " << num_files << " FILES ..." << std::endl;
 
+    {
     #pragma omp parallel for 
     for (int i = 0; i < num_files;  ++i) {
-        allStats[i] = wavReader::processFile(file_paths[i], ngram_size);
+        wavReader::processFile(file_paths[i], this->ngram_size, allStats[i]);
     }
 
     for (const auto& local : allStats) {
@@ -170,6 +163,7 @@ wavReader::wavReader() {
             this->globalStats.ngram_counts[ngram] += count;
         }
         this->globalStats.total_count += local.total_count;
+    }
     }
 
     std::cout << "TOTAL COUNT FOUND: " << this->globalStats.total_count << std::endl;
