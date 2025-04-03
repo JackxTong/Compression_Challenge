@@ -14,7 +14,7 @@
 #include <utility>
 #include <vector>
 
-#include <omp.h>
+// #include <omp.h>
 
 struct samples_t {
             uint32_t sample_rate;
