@@ -36,3 +36,5 @@ Number of unique symbols: 1427664
 ```
 
 and saved the probabiltiy dictionary into `ngram_prob_python.txt`
+
+Given this dict, can run `arithmetic.py` for arithmetic coding.
