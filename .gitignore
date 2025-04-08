@@ -398,4 +398,5 @@ FodyWeavers.xsd
 
 *.out
 
-*.txt
+single_symbol_probabilities.txt
+ngram_probabilities.txt
